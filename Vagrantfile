@@ -2,8 +2,6 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/xenial64"
 
   # Machine-specific provider-specific config (names)
@@ -30,6 +28,8 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+    locale-gen en_US.UTF-8 es_ES.UTF-8
+
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 

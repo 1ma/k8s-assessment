@@ -2,7 +2,7 @@
 set -xeu
 
 TOKEN=
-MASTER_IP=
+MASTER_IP=192.168.33.10
 
 sudo apt-get install -y docker-engine
 sudo usermod -a -G docker ubuntu
