@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = "ubuntu/xenial64"
+
+  # Machine-specific provider-specific config (names)
+  config.vm.define "k8s-master" do |machineconfig|
+    machineconfig.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-master"
+    end
+    machineconfig.vm.network "private_network", ip: "192.168.33.10"
+  end
+
+  config.vm.define "k8s-node1" do |machineconfig|
+    machineconfig.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-node1"
+    end
+    machineconfig.vm.network "private_network", ip: "192.168.33.11"
+  end
+
+  config.vm.define "k8s-node2" do |machineconfig|
+    machineconfig.vm.provider "virtualbox" do |vb|
+      vb.name = "k8s-node2"
+    end
+    machineconfig.vm.network "private_network", ip: "192.168.33.12"
+  end
+
+  # Common provider-specific config
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "1024"
+    vb.cpus = 1
+    vb.customize ["modifyvm", :id, "--vram", "8"]
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    sh -c 'echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
+    sh -c 'echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" > /etc/apt/sources.list.d/docker.list'
+
+    apt-get update -y
+#    apt-get -y install linux-image-extra-$(uname -r)
+#    apt-get -y install docker-engine kubelet kubeadm kubectl kubernetes-cni
+#    userermod -a -G docker vagrant   ## add vagrant user to docker group
+#    service docker restart
+  SHELL
+end
